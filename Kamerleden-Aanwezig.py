@@ -204,11 +204,25 @@ def arrayParsing(aanwezig, afwezig):
   df = pd.DataFrame(data=afwezig, columns=["afwezig"])
   df['counts'] = pd.DataFrame(data=count)
   # Tel hoevaak mensen afwezig zijn en geef lijst terug met aantal afwezigheden p.p.
-  return df.groupby('afwezig').count().sort_values(by=["counts"], ascending=False)
+  return df
 
 # Make nice graph who is present and who is not
-def makeGraph(aanwezig, afwezig):
+def makeHTML(aanwezig, afwezig):
   data = arrayParsing(aanwezig, afwezig)
+  
+  data = data["afwezig"].value_counts()
+  f = open("index.html", "w")
+  f.write("<!DOCTYPE html>\n<html>\n<head>\n<link rel=\"stylesheet\" href=\"style.css\">\n</head>\n<body>")
+  f.write("<h1>\nKamerleden Afnwezigheid</h1>\n")
+  f.write("<table>\n")
+  f.write("<th>Naam</th><th>Aantal</th>")
+  for entry in data.items():
+    f.write("<tr>")
+    f.write( "<td>" + entry[0] + "</td><td>" + str(entry[1]) + "</td>")
+    f.write("</tr>" + '\n')
+  f.write("</table>\n")
+  f.write("</body>")
+
 
 
 def aanwezigheid(datum):
@@ -307,17 +321,16 @@ def main():
   
   # Wachten op antwoord waar we iets mee kunnen
   while bezig:
-    str = input("Grafiekje maken? j/n: \n")
+    str = input("HTML maken? j/n: \n")
     if str == "j" or str == "J":
-      if bereik: makeGraph(aanwezig_arr, afwezig_arr)
-      else: makeGraph(aanwezig, afwezig)
+      if bereik: makeHTML(aanwezig_arr, afwezig_arr)
+      else: makeHTML(aanwezig, afwezig)
       bezig = False
     elif str == "n" or str == "N":
       bezig = False
     else:
       print("Invoer is j/n")
   
-
 
 if __name__=="__main__":
   parser = argparse.ArgumentParser(description="Set debug mode for printing")
