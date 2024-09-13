@@ -15,6 +15,24 @@ import argparse
 
 debug = False
 
+def kamerleden():
+  namen = ["Jong", "Bosma", "Dijck", "Dijk", "Groot", "Jansen", "Vries", "Mulder"]
+  url = "https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/Persoon?$filter=Verwijderd%20eq%20false%20and%20FractieZetelPersoon/any(a:a/TotEnMet%20eq%20null)"
+  r = req.get(url)
+  content = json.loads(r.content)
+  f = open("files/2dekmrledn2.txt", "w")
+  for item in content["value"]:
+    naam = ""
+    if item["Achternaam"] in namen:
+      if item["Roepnaam"] != "Jimmy":
+        naam += item["Roepnaam"].lower().replace(" ","")
+    if item["Tussenvoegsel"] != None:
+      naam += item["Tussenvoegsel"].replace(" ","")
+    naam += item["Achternaam"].lower().replace(" ","")
+    f.write(naam+"\n")
+  f.close()
+
+
 # Get most recent 'vergaderverslag' from tweedekamer API
 def getURLContent(datum):
   # Write to log file
@@ -129,18 +147,26 @@ def stringSimilarity(target, source, matched):
       continue
     consistent = 0
     for j in range(len(target)):
+
+      ### Not needed, quite shit ###
       # If the length of one of the strings has been reached or if enough letters are matched
-      if j >= len(source[i]) or j >= len(target) or consistent >= len(source[i]) - 1:
-        # If enough letters are matched accept it
-        if consistent >= len(source[i]) - 1:
-          matched.append(source[i])
-          if debug:
-            print(f"mathced {target} to {source[i]}")
-          return True
-        else:break
+      # if j >= len(source[i]) or j >= len(target) or consistent >= len(source[i]) - 1:
+      #   # If enough letters are matched accept it
+      #   if consistent >= len(source[i]) - 1:
+      ### ++ ###
+
+      if source[i] == target:
+        matched.append(source[i])
+        if debug:
+          print(f"matched {target} to {source[i]}")
+        return True
+
+      ### Not needed, quite shit ###
       # Compare letters
-      if target[j] == source[i][j]:
-        consistent += 1
+      # if target[j] == source[i][j]:
+      #   consistent += 1
+      ### ++ ###
+
   # No match found
   return False
 
@@ -150,7 +176,7 @@ def presentie(aanwezig):
   afwezig = []
   integer = 0
   # Open file with all members
-  f = open("files/2dekmrledn.txt", 'r')
+  f = open("files/2dekmrledn2.txt", 'r')
   print("----Afwezig:----")
 
   # Check who are present at vergaderingen and mark in 'matched' array
@@ -167,6 +193,7 @@ def presentie(aanwezig):
   if integer is not len(aanwezig):
     print(f"Aantal Kamerleden matcht niet met het aanwezige aantal is {integer} maar moet zijn {len(aanwezig)}")
   print(afwezig)
+  print(aanwezig)
   return aanwezig, afwezig
     
 
@@ -176,11 +203,13 @@ def arrayParsing(aanwezig, afwezig):
   afwezig = afwezig.reshape(-1)
   df = pd.DataFrame(data=afwezig, columns=["afwezig"])
   df['counts'] = pd.DataFrame(data=count)
-  print(df.groupby('afwezig').count().sort_values(by=["counts"], ascending=False))
+  # Tel hoevaak mensen afwezig zijn en geef lijst terug met aantal afwezigheden p.p.
+  return df.groupby('afwezig').count().sort_values(by=["counts"], ascending=False)
 
 # Make nice graph who is present and who is not
 def makeGraph(aanwezig, afwezig):
   data = arrayParsing(aanwezig, afwezig)
+
 
 def aanwezigheid(datum):
   # Check of er wel een echte datum doorgegeven is
@@ -204,7 +233,7 @@ def aanwezigheid(datum):
     return None, None
   # Geef de aanwezigen terug aan de bovenliggende functie 
   aanwezig, afwezig = presentie(kamerleden)
-  f = open(f"files/logs/log{datum}.txt", "a")
+  f = open(f"files/logs/log_{datum}.txt", "a")
   f.write("Aanwezig:\n")
   for str in aanwezig:
     f.write(str + '\n')
@@ -217,21 +246,29 @@ def aanwezigheid(datum):
   
 
 def main():
+  bereik = False
   str = input("1: Zelf datum opgeven \n2: Bereik van data: ")
   aanwezig = ""
   aanwezig_arr = []
   afwezig_arr = []
+  #  Een specifieke datum
   if int(str) == 1:
-    str = input("Geef een datum op (YYY-MM-DD): ")
+    str = input("Geef een datum op (YYYY-MM-DD): ")
     # Check de invoer voor yyyy-mm-dd
     assert str.split('-')[0].__len__() == 4
     assert str.split('-')[1].__len__() == 2
     assert str.split('-')[2].__len__() == 2
     datum = date.fromisoformat(str)
+    if date.today() < datum:
+      print("Kan niet in de toekomst kijken, misschien een volgende update :)")
+      exit(0)
     aanwezig, afwezig = aanwezigheid(datum)
+
+  # Bereik van data
   elif int(str) == 2:
-    str1 = input("Geef een eerste datum op (YYY-MM-DD): ")
-    str2 = input("Geef een tweede datum op (YYY-MM-DD): ")
+    bereik = True
+    str1 = input("Geef een eerste datum op (YYYY-MM-DD): ")
+    str2 = input("Geef een tweede datum op (YYYY-MM-DD): ")
 
     assert str1.split('-')[0].__len__() == 4
     assert str1.split('-')[1].__len__() == 2
@@ -242,6 +279,10 @@ def main():
     assert str2.split('-')[1].__len__() == 2
     assert str2.split('-')[2].__len__() == 2
     datum2 = date.fromisoformat(str2)
+    
+    if date.today() < datum2:
+      print("Kan niet in de toekomst kijken, misschien een volgende update :)")
+      exit(0)
 
     delta = datum2 - datum1
     
@@ -263,10 +304,13 @@ def main():
   else:
     print("Verkeerde invoer")
   bezig = True
+  
+  # Wachten op antwoord waar we iets mee kunnen
   while bezig:
     str = input("Grafiekje maken? j/n: \n")
     if str == "j" or str == "J":
-      makeGraph(aanwezig_arr, afwezig_arr)
+      if bereik: makeGraph(aanwezig_arr, afwezig_arr)
+      else: makeGraph(aanwezig, afwezig)
       bezig = False
     elif str == "n" or str == "N":
       bezig = False
@@ -282,4 +326,5 @@ if __name__=="__main__":
                             the getting and parsing process")
   args = parser.parse_args()
   debug = args.debug
+  kamerleden()
   main()
