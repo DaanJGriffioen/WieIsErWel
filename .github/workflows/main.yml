@@ -2,7 +2,7 @@ name: run Kamerleden-Aanwezig.py
 
 on: [push]
   # schedule: 
-  #   - cron:  '03 00 * * *'
+  #   - cron:  '03 00 * * *' 
     # * is a special character in YAML so you have to quote this string
 
 jobs:
