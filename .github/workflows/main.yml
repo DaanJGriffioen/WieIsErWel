@@ -1,9 +1,8 @@
 name: run Kamerleden-Aanwezig.py
 
-on: [push]
-  # schedule: 
-  #   - cron:  '03 00 * * *' 
-    # * is a special character in YAML so you have to quote this string
+on:
+   schedule: 
+     - cron:  '03 00 * * *'
 
 jobs:
   build:
