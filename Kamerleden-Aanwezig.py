@@ -357,7 +357,7 @@ if __name__=="__main__":
                       help="Set debug to True if you want to see the output of\
                             the getting and parsing process")
   parser.add_argument("--git", default=False, type=bool, metavar=debug,
-                      help="Used when run on github pages to make nice table")
+                      help="Used when run on github pages to make nice table!")
   args = parser.parse_args()
   debug = args.debug
   git = args.git
