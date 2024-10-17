@@ -25,9 +25,9 @@ jobs:
           pip install bokeh
           pip install pandas
 
-      - name: execute py script # run Kamerleden-Aanwezig.py --git True
+      - name: execute py script # run Kamerleden-Aanwezig.py
         run: |
-          python3 Kamerleden-Aanwezig.py  
+          python3 Kamerleden-Aanwezig.py --git True
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
