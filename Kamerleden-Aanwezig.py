@@ -270,10 +270,20 @@ def main():
   afwezig_arr = []
   #  Een specifieke datum
   if git:
+    if(date.today().isoweekday() == 1 or date.today().isoweekday() == 7):
+      print("In het weekend wordt niet vergaderd")
+      exit(0)
     datum = date.today() - timedelta(days=1)
     stri = str(datum)
     aanwezig, afwezig = aanwezigheid(datum)
     data.extend([stri, stri])
+    print("aanwezigen: ", aanwezig)
+    print("afwezigen: ", afwezig)
+
+    if(type(aanwezig) == NoneType):
+      print("geen aanwezigen, er is iets fout gegaan wellicht is er niet vergaderd")
+      exit(0)
+
     makeHTML(aanwezig, afwezig, data)
     return
 
@@ -313,6 +323,7 @@ def main():
     if date.today() < datum2:
       print("Kan niet in de toekomst kijken, misschien een volgende update :)")
       exit(0)
+
 
     # Bereken het verschil tussen de datums
     delta = datum2 - datum1
