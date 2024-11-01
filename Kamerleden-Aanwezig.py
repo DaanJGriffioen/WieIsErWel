@@ -215,7 +215,7 @@ def makeHTML(aanwezig, afwezig, datums):
   data = data["afwezig"].value_counts()
   f = open("index.html", "w")
   f.write("<!DOCTYPE html>\n<html>\n<head>\n<link rel=\"stylesheet\" href=\"style.css\">\n</head>\n<body>")
-  f.write("<h1>\nKamerleden Afnwezigheid</h1>\n")
+  f.write("<h1>\nKamerleden Afwezigheid</h1>\n")
   f.write(f"<h2>Afwezigheid van {datums[0]} tot {datums[1]}</h2>")
   f.write("<table>\n")
   f.write("<th>Naam</th><th>Aantal</th>")
