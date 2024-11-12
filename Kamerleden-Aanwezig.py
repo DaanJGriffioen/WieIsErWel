@@ -37,9 +37,6 @@ def kamerleden():
 
 # Get most recent 'vergaderverslag' from tweedekamer API
 def getURLContent(datum):
-  # Write to log file
-  f = open(f"files/logs/log{str(datum)}.txt", "w")
-  f.close() 
   year = datum.year
   month = datum.month
   day = datum.day
@@ -47,6 +44,10 @@ def getURLContent(datum):
   if debug:
     print(url)
   r = req.get(url)
+  # Schrijf de URL naar de logfile
+  f = open(f"files/logs/log_{str(datum)}.txt", "w")
+  f.write("<url> " + url)
+  f.close() 
   return r.content
 
 # Get vergaderID from json
@@ -214,7 +215,7 @@ def makeHTML(aanwezig, afwezig, datums):
   data = arrayParsing(aanwezig, afwezig)
   
   data = data["afwezig"].value_counts()
-  f = open("index.html", "w")
+  f = open("table.html", "w")
   f.write("<!DOCTYPE html>\n<html>\n<head>\n<link rel=\"stylesheet\" href=\"style.css\">\n</head>\n<body>")
   f.write("<h1>\nKamerleden Afwezigheid</h1>\n")
   f.write(f"<h2>Afwezigheid van {datums[0]} tot {datums[1]}</h2>")
@@ -300,7 +301,7 @@ def main():
       print("Kan niet in de toekomst kijken")
       exit(0)
     aanwezig, afwezig = aanwezigheid(datum)
-    
+
     # Als er niemand is, stoppen
     if type(aanwezig) == type(None) or type(afwezig) == type(None):
       print("Geen aanwezigen / afwezigen")
