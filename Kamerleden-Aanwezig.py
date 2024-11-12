@@ -65,8 +65,8 @@ def getVerslag(vergID):
   r = []
   for i in range(len(vergID)):
     url = f"https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/Verslag/{vergID[i]}/resource"
-    if debug:
-      print(url)
+    
+    print(url)
     r.append(req.get(url))
   return r
 
@@ -82,8 +82,9 @@ def laatste(verslagen):
     except:
       raise Exception("Error parsing XML")
 
+    print("root", root[0][1] != "Plenaire zaal")
     if root[0][1].text != "Plenaire zaal" or root.attrib['soort'] == "Voorpublicatie":
-      tijden.append(0)
+      tijden.append(-1)
       continue
     
     tijden.append(root.attrib["Timestamp"].split('T')[1].split(':')[0])
@@ -296,9 +297,15 @@ def main():
     assert stri.split('-')[2].__len__() == 2
     datum = date.fromisoformat(stri)
     if date.today() < datum:
-      print("Kan niet in de toekomst kijken, misschien een volgende update ;)")
+      print("Kan niet in de toekomst kijken")
       exit(0)
     aanwezig, afwezig = aanwezigheid(datum)
+    
+    # Als er niemand is, stoppen
+    if type(aanwezig) == type(None) or type(afwezig) == type(None):
+      print("Geen aanwezigen / afwezigen")
+      exit(0)
+
     data.extend([stri, stri])
 
   # Bereik van data
