@@ -262,7 +262,7 @@ def aanwezigheid(datum):
   f.close()
 
   return aanwezig, afwezig
-  
+
 
 def main():
   bereik = False
