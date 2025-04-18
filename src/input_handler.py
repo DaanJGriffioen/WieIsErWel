@@ -1,17 +1,16 @@
-from parse import parseXML, extractID, presentie, debug
+from parse import parseXML, extractID, presentie
 from get_data import getURLContent, getVerslag
 from datetime import date
+from const import  debug
 
 def aanwezigheid(datum):
-    # Check of er wel een echte datum doorgegeven is
+    # Check if a date has been passed
     assert type(datum) == date
-    # Haal het verslag op
-    content = getURLContent(datum)
+    # Get the document based on the date
+    vergID = getURLContent(datum)
     # Haal de vergaderID uit het verslag
-    print("CONTENT")
-    print(content)
-    vergID = extractID(content)
-    # Als de ID nul is, is er geen vergaderverslag
+    # vergID = extractID(content)
+    # If the id is 0, there is no document
     if len(vergID) == 0:
         return None, None
 

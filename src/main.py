@@ -97,7 +97,7 @@ def main():
             afwezig_arr += afwezig
         else:
             print("Verkeerde invoer")
-        bezig = True
+    bezig = True
         
         # Wachten op antwoord waar we iets mee kunnen
         

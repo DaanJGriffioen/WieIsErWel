@@ -40,14 +40,15 @@ def parseXML(verslagen):
             
         if not next or type(kamerleden) == None:
             continue
-        if type(kamerleden) == type(None):
-            return -1
-        # Format and transform into array
-        kamerleden = kamerleden.lower().replace(" en ",",").replace(" ","").split(",")
-        if debug:
-            print(type(kamerleden), kamerleden)
-        # Last index is invalid ez fix
-        return kamerleden[:len(kamerleden)-1]
+
+    if type(kamerleden) == type(None):
+        return -1
+    # Format and transform into array
+    kamerleden = kamerleden.lower().replace(" en ",",").replace(" ","").split(",")
+    if debug:
+        print(type(kamerleden), kamerleden)
+    # Last index is invalid ez fix
+    return kamerleden[:len(kamerleden)-1]
 
 
 def laatste(verslagen):
@@ -104,14 +105,14 @@ def stringSimilarity(target, source, matched):
                     print(f"matched {target} to {source[i]}")
                 return True
 
-            # No match found
-            return False
+    # No match found
+    return False
 
 # Checking presence
 def presentie(aanwezig):
     matched = []
     afwezig = []
-    integer = 0
+    count = 0
     # Open file with all members
     f = open("files/2dekmrledn2.txt", 'r')
     print("----Afwezig:----")
@@ -119,19 +120,20 @@ def presentie(aanwezig):
     # Check who are present at vergaderingen and mark in 'matched' array
     for line in f:
         if stringSimilarity(line.rstrip('\n'), aanwezig, matched):
-            integer += 1
+            count += 1
         else:
             print(line.rstrip('\n'))
             afwezig.append(line.rstrip('\n'))
             pass
         
-        print(integer, "/", len(aanwezig), len(afwezig), "afwezigen")
-        # Check if everyone has been matched
-        if integer is not len(aanwezig):
-            print(f"Aantal Kamerleden matcht niet met het aanwezige aantal is {integer} maar moet zijn {len(aanwezig)}")
-        print(afwezig)
-        print(aanwezig)
-        return aanwezig, afwezig
+    print(count, "/", len(aanwezig), len(afwezig), "afwezigen")
+    # Check if everyone has been matched
+    if count is not len(aanwezig):
+        print(f"Aantal Kamerleden matcht niet met het aanwezige aantal is {count} maar moet zijn {len(aanwezig)}")
+    afwezig.sort()
+    print(afwezig)
+    print(aanwezig)
+    return aanwezig, afwezig
                                             
 
 # Tel hoevaak mensen afwezig zijn en geef lijst terug met aantal afwezigheden p.p.
