@@ -1,3 +1,8 @@
 logs/
 log*
 *.yaml
+*.txt
+*.json
+*.png
+src/__pycache__/
+*.cc
