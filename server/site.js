@@ -1,6 +1,8 @@
 
 function showData(){
-  fetch("files/logs/log_2024-11-08.txt")
+  fetch("files/logs/log_2025-03-12.txt",{
+    mode: 'no-cors',
+  })
     .then((res) => res.text())
     .then((text) => {
       console.log(text)
@@ -52,6 +54,7 @@ async function makeTable(date){
   let first = true;
   // Loop through the given files
   for (const element of date){
+    
     let aanw = 1;
     let afw  = 0;
     // Get the correct file
@@ -91,6 +94,8 @@ async function makeTable(date){
       }
     }
     first = false;
+    if(date[0] === date[1])
+      return row;
   }
   return row;
 } 
