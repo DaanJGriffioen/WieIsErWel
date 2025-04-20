@@ -1,13 +1,13 @@
-from parse import parseXML, extractID, presentie
-from get_data import getURLContent, getVerslag
+from parse import parseXML, extractID, presentie, parseJson
+from get_data import getUrlData, getVerslag
 from datetime import date
-from const import  debug
+from const import debug, docType
 
 def aanwezigheid(datum):
     # Check if a date has been passed
     assert type(datum) == date
     # Get the document based on the date
-    vergID = getURLContent(datum)
+    vergID = getUrlData(datum)
     # Haal de vergaderID uit het verslag
     # vergID = extractID(content)
     # If the id is 0, there is no document
@@ -17,9 +17,12 @@ def aanwezigheid(datum):
     if debug:
         print(vergID[0])
     # Haal het verslag op a.h.v. de vergaderID
-    verslagen = getVerslag(vergID)
+    verslagen = getVerslag(vergID, False)
     # Haal de lijst met kamerleden uit de verslagen
-    kamerleden = parseXML(verslagen)
+    if docType == "Verslag":
+        kamerleden = parseXML(verslagen)
+    elif docType == "Stemming":
+        kamerleden = parseJson(verslagen)
     # Check of er wel echt iets uitgekomen is
     if kamerleden == -1:
         return None, None
