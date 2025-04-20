@@ -1,16 +1,49 @@
+import doctest
 import xml.etree.ElementTree as ET
 import pandas as pd
 import numpy as np
 import json
+from const import debug, docType, git
 
-debug = False
-git = False
+# Parse the JSON data received from the API
+# TODO: Parse all `stemmingen`
+def parseJson(verslagen):
+    kamerleden = []
+
+    stemVerslag = json.loads(verslagen[0].content)
+    
+
+    for person in stemVerslag["value"]:
+        name = ""
+        blackList = ["Teunissen, C. (Christine)", "Aartsen, A.A. (Thierry)", "Boomsma, D.T. (Diederik)"]
+        if len(person["ActorNaam"].split('(')) > 1 and person["ActorNaam"] not in blackList:
+            name = person["ActorNaam"].split('(')[1].split(')')[0]
+            
+
+        lastName = person["ActorNaam"].split(',')[0].split(' ')
+
+        if lastName[0] == "Six":
+            kamerleden.append("sixdijkstra")
+            continue
+        
+        if len(lastName) > 1:
+            name = name + lastName[1]
+        if len(lastName) > 2:
+            name = name + lastName[2]
+        
+        name = name + lastName[0]
+
+        kamerleden.append(name.lower())
+
+
+
+
 
 # Parse the XML received from the API
 def parseXML(verslagen):
     next = False
     kamerleden = ""
-
+    
     laatste_vers = laatste(verslagen)
     
     if laatste_vers == -1:
@@ -25,7 +58,7 @@ def parseXML(verslagen):
 
     # Parse XML and extract specific element
     ns = {'ns': 'http://www.tweedekamer.nl/ggm/vergaderverslag/v1.0'}
-    alinea_elements    = root.findall(".//ns:alineaitem", namespaces=ns)
+    alinea_elements = root.findall(".//ns:alineaitem", namespaces=ns)
     if debug:
         print(type(alinea_elements))
         
@@ -59,16 +92,19 @@ def laatste(verslagen):
         verslag = verslagen[i].content.decode()
 
         try:
-            root = ET.fromstring(verslag)
+            if docType == "Verslag":
+                root = ET.fromstring(verslag)
+            else:
+                root = verslag
+
         except:
             raise Exception("Error parsing XML")
-
-        print("root", root[0][1] != "Plenaire zaal")
+       
         if root[0][1].text != "Plenaire zaal" or root.attrib['soort'] == "Voorpublicatie":
             tijden.append(-1)
             continue
-        
         tijden.append(root.attrib["Timestamp"].split('T')[1].split(':')[0])
+
 
     for j in range(len(tijden)):
         if int(tijden[j]) > max:
