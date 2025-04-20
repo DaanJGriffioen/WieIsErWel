@@ -1,42 +1,58 @@
+from curses.ascii import BEL
+from types import NoneType
 from const import docType
 import requests as req
 import json
 from datetime import date, timedelta
+            
 
-
-def getVerslag(vergID):
-    r = []
+def getVerslag(vergID, stemmingData):
+    data = []
     count = 0
-    for i in range(len(vergID)):
-        url = f"https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/{docType}/{vergID[i]}/resource"
+    for id in vergID:
+        if docType == "Verslag":
+            url = f"https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/{docType}/{id}/resource"
+        elif docType == "Stemming":
+            url = f"https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/Stemming?$filter=Besluit_Id%20eq%20{id}"
+
         print(url)
         try:
-            r.append(req.get(url))
+            data.append(req.get(url))
         except:
             print("Error getting url")
             exit(1)
 
-    return r
+    return data
 
-
-def getURLContent(datum):
+# Gets data for docType from date `datum`
+def getUrlData(datum):
     year = datum.year
     month = datum.month
     day = datum.day
-
+    
     url = f"https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/{docType}?$filter=year(GewijzigdOp)%20eq%20{year}%20and%20month(GewijzigdOp)%20eq%20{month}%20and%20day(GewijzigdOp)%20eq%20{day}"
 
+    try:
+        r = req.get(url)
+    except:
+        print("Error getting url")
+        exit(1)
 
-    r = req.get(url)
-
+    print(url)
     val = json.loads(r.content)
+
     vergaderingen = []
     for line in val["value"]:
-        if line["Verwijderd"] == False:
+        if docType == "Stemming" and line["Persoon_Id"] is None:
+            continue
+        if docType == "Verslag" and line["Verwijderd"] == False:
             vergaderingen.append(line["Id"])
-    
-    print(vergaderingen)
+        elif docType == "Stemming" and line["Verwijderd"] == False:
+            if line["Besluit_Id"] not in vergaderingen:
+                vergaderingen.append(line["Besluit_Id"])
+            
     return vergaderingen
+
 
 # Get the names of the members of the parliament
 def kamerleden():
