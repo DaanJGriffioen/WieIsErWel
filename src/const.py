@@ -3,4 +3,4 @@
 git = False
 debug = False
 
-docType = "Verslag" # possible entries are Verslag or Stemming
+docType = "Stemming" # possible entries are Verslag or Stemming
