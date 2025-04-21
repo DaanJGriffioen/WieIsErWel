@@ -64,11 +64,21 @@ def kamerleden():
     f = open("files/2dekmrledn2.txt", "w")
     for item in content["value"]:
         naam = ""
+        # skip if the parliamentarian did not attend
+        if item["Soort"] == "Niet deelgenomen":
+            continue
+
+        # Make sure the name is formatted correctly
         if item["Achternaam"] in namen:
+            # Problems for Jimmy Dijk, registered as dijk
             if item["Roepnaam"] != "Jimmy":
+                # Add the first name for parliamentarian if necessary
                 naam += item["Roepnaam"].lower().replace(" ","")
         if item["Tussenvoegsel"] != None:
+            # add tussenvoegsel (van / van der, etc.) if present
             naam += item["Tussenvoegsel"].replace(" ","")
+        # Add last name
         naam += item["Achternaam"].lower().replace(" ","")
-        f.write(naam+"\n")
+
+        f.write(naam +"\n")
     f.close()
