@@ -13,27 +13,31 @@ def parseJson(verslagen):
 
     stemVerslag = json.loads(verslagen[0].content)
     
-
+    # Special formatting for stemming verslag
     for person in stemVerslag["value"]:
         name = ""
+        # Unnecessarily added first names need to be removed before comparing
         blackList = ["Teunissen, C. (Christine)", "Aartsen, A.A. (Thierry)", "Boomsma, D.T. (Diederik)"]
         if len(person["ActorNaam"].split('(')) > 1 and person["ActorNaam"] not in blackList:
+            # Use the first names of parliamentarians if necessary
             name = person["ActorNaam"].split('(')[1].split(')')[0]
             
-
+        # Extract last name
         lastName = person["ActorNaam"].split(',')[0].split(' ')
 
+        # Special edge case for parliamentarian Six Dijkstra
         if lastName[0] == "Six":
             kamerleden.append("sixdijkstra")
             continue
         
+        # Add infixes if necessary
         if len(lastName) > 1:
             name = name + lastName[1]
         if len(lastName) > 2:
             name = name + lastName[2]
         
+        # Add first name and lastname and append to list
         name = name + lastName[0]
-
         kamerleden.append(name.lower())
         
     return kamerleden
@@ -117,19 +121,6 @@ def laatste(verslagen):
         if debug:
             print(max_element, max)
         return max_element
-
-
-# Get vergaderID from json
-def extractID(content):
-    val = json.loads(content)
-    vergaderingen = []
-    for line in val["value"]:
-        if line["Verwijderd"] == False:
-            if debug:
-                print(line)
-            vergaderingen.append(line["Id"])
-        return vergaderingen
-
 
 # Match names from present list (source) to total list (target)
 def stringSimilarity(target, source, matched):
