@@ -1,4 +1,4 @@
-from parse import parseXML, extractID, presentie, parseJson
+from parse import parseXML, presentie, parseJson
 from get_data import getUrlData, getVerslag
 from datetime import date
 from const import debug, docType
@@ -8,27 +8,30 @@ def aanwezigheid(datum):
     assert type(datum) == date
     # Get the document based on the date
     vergID = getUrlData(datum)
-    # Haal de vergaderID uit het verslag
-    # vergID = extractID(content)
-    # If the id is 0, there is no document
+    
     if len(vergID) == 0:
         return None, None
 
     if debug:
         print(vergID[0])
-    # Haal het verslag op a.h.v. de vergaderID
+    # Get verslag corresponding to vergID
     verslagen = getVerslag(vergID, False)
-    # Haal de lijst met kamerleden uit de verslagen
+
+    # Extract the list of members present from the reports
     if docType == "Verslag":
         kamerleden = parseXML(verslagen)
     elif docType == "Stemming":
         kamerleden = parseJson(verslagen)
-    # Check of er wel echt iets uitgekomen is
+
+    # Check if kamerleden has been parsed correctly
     if kamerleden == -1:
         return None, None
-    # Geef de aanwezigen terug aan de bovenliggende functie 
+
+    # Get the present and absent members based on the current presence 
     aanwezig, afwezig = presentie(kamerleden)
-    f = open(f"files/logs/log_{datum}.txt", "a")
+
+    # Add to logfile
+    f = open(f"files/logs/log_{docType}_{datum}.txt", "a")
     f.write("Aanwezig:\n")
     for stri in aanwezig:
         f.write(stri + '\n')
