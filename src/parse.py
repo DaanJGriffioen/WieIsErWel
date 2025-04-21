@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 import pandas as pd
 import numpy as np
 import json
+from difflib import SequenceMatcher
 from const import debug, docType, git
 
 # Parse the JSON data received from the API
@@ -34,10 +35,12 @@ def parseJson(verslagen):
         name = name + lastName[0]
 
         kamerleden.append(name.lower())
+        
+    return kamerleden
 
 
-
-
+def similair(a, b):
+    return SequenceMatcher(None, a, b).ratio()
 
 # Parse the XML received from the API
 def parseXML(verslagen):
@@ -135,7 +138,7 @@ def stringSimilarity(target, source, matched):
             continue
         
         for j in range(len(target)):
-            if source[i] == target:
+            if similair(source[i], target) > 0.8:
                 matched.append(source[i])
                 if debug:
                     print(f"matched {target} to {source[i]}")
