@@ -15,8 +15,12 @@ def parseJson(verslagen):
     
     # Special formatting for stemming verslag
     for person in stemVerslag["value"]:
+        # If the parliamentarian was not present, disregard
+        if person["Soort"] == "Niet deelgenomen":
+            continue
+
         name = ""
-        # Unnecessarily added first names need to be removed before comparing
+        # Sommige voornamen worden onnodig toegevoegd, herrinner ze om ze weg te halen
         blackList = ["Teunissen, C. (Christine)", "Aartsen, A.A. (Thierry)", "Boomsma, D.T. (Diederik)"]
         if len(person["ActorNaam"].split('(')) > 1 and person["ActorNaam"] not in blackList:
             # Use the first names of parliamentarians if necessary
@@ -25,7 +29,7 @@ def parseJson(verslagen):
         # Extract last name
         lastName = person["ActorNaam"].split(',')[0].split(' ')
 
-        # Special edge case for parliamentarian Six Dijkstra
+        # Special edge case for parliamentarian Six Dijkstra (What kind of name is that)
         if lastName[0] == "Six":
             kamerleden.append("sixdijkstra")
             continue
@@ -156,13 +160,13 @@ def presentie(aanwezig):
             afwezig.append(line.rstrip('\n'))
             pass
         
-    print(count, "/", len(aanwezig), len(afwezig), "afwezigen")
+    print(len(aanwezig), len(afwezig), "afwezigen")
     # Check if everyone has been matched
     if count is not len(aanwezig):
         print(f"Aantal Kamerleden matcht niet met het aanwezige aantal is {count} maar moet zijn {len(aanwezig)}")
     afwezig.sort()
-    print(afwezig)
-    print(aanwezig)
+    # print(afwezig)
+    # print(aanwezig)
     return aanwezig, afwezig
                                             
 

@@ -1,6 +1,5 @@
-
 function showData(){
-  fetch("files/logs/log_2025-03-12.txt",{
+  fetch("./files/logs/log_2025-03-12.txt",{
     mode: 'no-cors',
   })
     .then((res) => res.text())
@@ -10,7 +9,7 @@ function showData(){
 }
 
 async function readFile() {
-  const response = await fetch("files/2dekmrledn.txt");
+  const response = await fetch("./files/2dekmrledn.txt");
   const text = await response.text();
   const lines = text.split('\n');
   const namedText = lines.map(element => ({
@@ -57,8 +56,11 @@ async function makeTable(date){
     
     let aanw = 1;
     let afw  = 0;
-    // Get the correct file
-    const res = await fetch(`files/logs/log_${element}.txt`);
+    
+    // if(! existsSync(`./files/logs/log_${element}.txt`)){
+    //   continue;
+    // }
+    const res = await fetch(`./files/logs/log_${element}.txt`);
     const text = await res.text();
     
     naam = text.split('\n')
@@ -99,8 +101,9 @@ async function makeTable(date){
   }
   return row;
 } 
-    
+
 async function table(date){
+  console.log("HELLo");
   let row = await makeTable(date);
   displayTable(row);
 }
