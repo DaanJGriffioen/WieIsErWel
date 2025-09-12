@@ -30,7 +30,7 @@ def parse_activiteiten(content):
 
 def update_activiteiten():
     print('Getting activiteiten...')
-    url = f"https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/Activiteit?$filter=year(Datum) eq {date.today().year} and Status eq 'uitgevoerd' and Document/any(a:a/Soort eq 'Motie')"
+    url = f"https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/Zaak?$filter=year(GewijzigdOp) eq {date.today().year} and month(GewijzigdOp) eq {date.today().month} and Soort eq 'Motie'"
     print(url)
     try:
         r = const.req.get(url)
