@@ -1,21 +1,20 @@
 
 
 class Activiteit:
-    # Id, onderwerp, soort, datum, status
-    def __init__(self, id, onderwerp, soort, datum, kamer, start_t, eind_t, v_id, v_Sid, v_naam, VRS):
+    # Id, Nummer, Soort, Titel, Status, Onderwerp, Organisatie, Volgnummer, Afgedaan, GewijzigdOp
+    def __init__(self, id, nummer, soort, titel, status, onderwerp, organisatie, volgnummer, afgedaan, gewijzigd_op):
         self.id = id
+        self.nummer = nummer
         self.soort = soort
-        self.aanvangstijd = start_t
-        self.eindtijd = eind_t
+        self.titel = titel
+        self.status = status
         self.onderwerp = onderwerp
-        self.datum = datum
-        self.kamer = kamer
-        self.idVoortouw = v_id
-        self.SidVoortouw = v_Sid
-        self.voortouwNaam = v_naam
-        self.vrs = VRS
+        self.organisatie = organisatie
+        self.volgnummer = volgnummer
+        self.afgedaan = afgedaan
+        self.gewijzigd_op = gewijzigd_op
 
         
     def get_kl_activiteit(naam):
-        statement_id = f"GET id FROM kamerleden_tabel WHERE naam = {naam}"
-        statement = f"GET * FROM activiteiten_tabel WHERE id = {statement_id}"
+        statement_id = f"GET id FROM kamerleden WHERE naam = {naam}"
+        statement = f"GET * FROM zaak WHERE id = {statement_id}"

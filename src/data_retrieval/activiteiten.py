@@ -12,16 +12,15 @@ def parse_activiteiten(content):
         activiteiten_list.append(
             activiteit.Activiteit(
                 id=element["Id"],
-                onderwerp = element["Onderwerp"],
-                soort = element["Soort"],
-                datum = element["Datum"],
-                kamer = element["Kamer"],
-                start_t = element["Aanvangstijd"],
-                eind_t = element["Eindtijd"],
-                v_id = element["Voortouwcommissie_Id"],
-                v_Sid = element["SidVoortouw"],
-                v_naam = element["Voortouwnaam"], 
-                VRS = element["VRSNummer"]
+                nummer=element["Nummer"],
+                soort=element["Soort"],
+                titel=element["Titel"],
+                status=element["Status"],
+                onderwerp=element["Onderwerp"],
+                organisatie=element["Organisatie"],
+                volgnummer=element["Volgnummer"],
+                afgedaan=element["Afgedaan"],
+                gewijzigd_op=element["GewijzigdOp"]
             )
         )
     

@@ -42,29 +42,26 @@ def save_activiteit(data):
 
     cursor = conn.cursor()
     for row in data:
-        
-       statement = """
-       INSERT INTO activiteiten
-           (id, soort, aanvangstijd, eindtijd, onderwerp, datum, kamer, v_id, v_Sid, v_naam, VRS)
-       VALUES
-           (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
-       """
-
-       cursor.execute(
-           statement,
-           (
-               row.id,
-               row['soort'],
-               row['start_t'],
-               row['eind_t'],
-               row['onderwerp'],
-               row['datum'],
-               row['kamer'],
-               row['v_id'],
-               row['v_Sid'],
-               row['v_naam'],
-               row['VRS']
-           )
-       )
+        statement = """
+        INSERT INTO zaak
+            (Id, Nummer, Soort, Titel, Status, Onderwerp, Organisatie, Volgnummer, Afgedaan, GewijzigdOp)
+        VALUES
+            (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+        """
+        cursor.execute(
+            statement,
+            (
+                row.id,
+                row.nummer,
+                row.soort,
+                row.titel,
+                row.status,
+                row.onderwerp,
+                row.organisatie,
+                row.volgnummer,
+                row.afgedaan,
+                row.gewijzigd_op
+            )
+        )
     conn.commit()
     cursor.close()
