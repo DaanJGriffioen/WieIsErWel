@@ -1,0 +1,47 @@
+from datetime import date
+from const import pd
+from models import activiteit
+from db import save
+import json
+import const 
+
+def parse_activiteiten(content):
+    activiteiten_list = []
+
+    for element in content["value"]:
+        activiteiten_list.append(
+            activiteit.Activiteit(
+                id=element["Id"],
+                onderwerp = element["Onderwerp"],
+                soort = element["Soort"],
+                datum = element["Datum"],
+                kamer = element["Kamer"],
+                start_t = element["Aanvangstijd"],
+                eind_t = element["Eindtijd"],
+                v_id = element["Voortouwcommissie_Id"],
+                v_Sid = element["SidVoortouw"],
+                v_naam = element["Voortouwnaam"], 
+                VRS = element["VRSNummer"]
+            )
+        )
+    
+    print(activiteiten_list)
+    save.save_activiteit(activiteiten_list)
+
+
+def update_activiteiten():
+    print('Getting activiteiten...')
+    url = f"https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/Activiteit?$filter=year(Datum) eq {date.today().year} and Status eq 'uitgevoerd' and Document/any(a:a/Soort eq 'Motie')"
+    print(url)
+    try:
+        r = const.req.get(url)
+    except:
+        print("Error getting url")
+        exit(1)
+
+    content = json.loads(r.content)
+
+    data = parse_activiteiten(content)
+    df = pd.DataFrame(data)
+    df['date'] = date.today()
+    # https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/Activiteit?$filter= year(Datum) eq 2025 and month(Datum) eq 8 and Status eq %27uitgevoerd%27

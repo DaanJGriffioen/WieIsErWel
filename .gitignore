@@ -7,3 +7,5 @@ log*
 *.png
 src/__pycache__/
 *.cc
+*.pyc
+nocommit/

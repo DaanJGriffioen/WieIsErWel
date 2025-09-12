@@ -1,9 +1,9 @@
-from datetime import date, datetime, timedelta
-from types import NoneType
-from get_data import kamerleden
+from datetime import  date, timedelta
+from data_retrieval.activiteiten import update_activiteiten
+from data_retrieval.karmerleden import update_kamerleden
 from visuals import makeHTML
 from input_handler import aanwezigheid
-from parse import debug, git
+from parse import debug
 import argparse
 
 
@@ -25,6 +25,7 @@ def main():
         if date.today() < datum:
             print("Kan niet in de toekomst kijken")
             exit(0)
+
         aanwezig, afwezig = aanwezigheid(datum)
 
         # Als er niemand is, stoppen
@@ -57,7 +58,6 @@ def main():
             print("Kan niet in de toekomst kijken, misschien een volgende update :)")
             exit(0)
 
-
         # Bereken het verschil tussen de data
         delta = datum2 - datum1
 
@@ -70,7 +70,7 @@ def main():
             if(datum1 == date.today()):
                 print("Verslag van vandaag is er waarschijnlijk niet, dus deze wordt niet gezocht")
                 continue
-
+        
             aanwezig, afwezig = aanwezigheid(datum1)
             if type(aanwezig) == type(None) or type(afwezig) == type(None):
                 continue
@@ -104,5 +104,6 @@ if __name__=="__main__":
     debug = args.debug
     git = args.git
 
-    kamerleden()
+    update_kamerleden()
+    update_activiteiten()
     main()

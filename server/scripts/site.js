@@ -60,7 +60,7 @@ async function makeTable(date){
     // if(! existsSync(`./files/logs/log_${element}.txt`)){
     //   continue;
     // }
-    const res = await fetch(`./files/logs/log_${element}.txt`);
+    const res = await fetch(`../src/files/logs/log_${element}.txt`);
     const text = await res.text();
     
     naam = text.split('\n')
