@@ -1,5 +1,5 @@
 from datetime import  date, timedelta
-from data_retrieval.activiteiten import update_activiteiten
+from data_retrieval.zaken import update_zaken
 from data_retrieval.karmerleden import update_kamerleden
 from visuals import makeHTML
 from input_handler import aanwezigheid
@@ -105,5 +105,5 @@ if __name__=="__main__":
     git = args.git
 
     update_kamerleden()
-    update_activiteiten()
+    update_zaken()
     main()

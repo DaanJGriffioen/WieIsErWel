@@ -1,6 +1,6 @@
 from db import save
 
-class Activiteit:
+class zaak:
     # Id, Nummer, Soort, Titel, Status, Onderwerp, Organisatie, Volgnummer, Afgedaan, GewijzigdOp
     def __init__(self, id, nummer, soort, titel, status, onderwerp, organisatie, volgnummer, afgedaan, gewijzigd_op):
         self.id = id
@@ -14,12 +14,12 @@ class Activiteit:
         self.afgedaan = afgedaan
         self.gewijzigd_op = gewijzigd_op
 
-    def parse_activiteiten(content):
-        activiteiten_list = []
+    def parse_zaken(content):
+        zaken_list = []
 
         for element in content["value"]:
-            activiteiten_list.append(
-                Activiteit(
+            zaken_list.append(
+                zaak(
                     id=element["Id"],
                     nummer=element["Nummer"],
                     soort=element["Soort"],
@@ -33,10 +33,10 @@ class Activiteit:
                 )
             )
         
-        print(activiteiten_list)
-        save.save_activiteit(activiteiten_list)
+        print(zaken_list)
+        save.save_zaak(zaken_list)
 
         
-    def get_kl_activiteit(naam):
+    def get_kl_zaak(naam):
         statement_id = f"GET id FROM kamerleden WHERE naam = {naam}"
         statement = f"GET * FROM zaak WHERE id = {statement_id}"

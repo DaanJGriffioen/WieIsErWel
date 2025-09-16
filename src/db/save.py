@@ -37,7 +37,7 @@ def save_kamerleden(data):
     conn.commit()
     cursor.close()
 
-def save_activiteit(data):
+def save_zaak(data):
     conn = get_connection()
     cursor = conn.cursor()
     
