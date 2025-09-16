@@ -1,4 +1,4 @@
-
+from db import save
 
 class Activiteit:
     # Id, Nummer, Soort, Titel, Status, Onderwerp, Organisatie, Volgnummer, Afgedaan, GewijzigdOp
@@ -13,6 +13,28 @@ class Activiteit:
         self.volgnummer = volgnummer
         self.afgedaan = afgedaan
         self.gewijzigd_op = gewijzigd_op
+
+    def parse_activiteiten(content):
+        activiteiten_list = []
+
+        for element in content["value"]:
+            activiteiten_list.append(
+                Activiteit(
+                    id=element["Id"],
+                    nummer=element["Nummer"],
+                    soort=element["Soort"],
+                    titel=element["Titel"],
+                    status=element["Status"],
+                    onderwerp=element["Onderwerp"],
+                    organisatie=element["Organisatie"],
+                    volgnummer=element["Volgnummer"],
+                    afgedaan=element["Afgedaan"],
+                    gewijzigd_op=element["GewijzigdOp"]
+                )
+            )
+        
+        print(activiteiten_list)
+        save.save_activiteit(activiteiten_list)
 
         
     def get_kl_activiteit(naam):
