@@ -39,9 +39,17 @@ def save_kamerleden(data):
 
 def save_activiteit(data):
     conn = get_connection()
-
     cursor = conn.cursor()
+    
+    statement = "SELECT id FROM zaak"
+
+    cursor.execute(statement)
+    existing_ids = [row[0] for row in cursor.fetchall()]    
+
     for row in data:
+        if row.id in existing_ids:
+            continue
+
         statement = """
         INSERT INTO zaak
             (Id, Nummer, Soort, Titel, Status, Onderwerp, Organisatie, Volgnummer, Afgedaan, GewijzigdOp)
