@@ -1,9 +1,8 @@
 import const 
-from models import kamerlid
+from models import kamerlid as kl
 from const import pd
 import json
 from datetime import date
-from db.save import save_kamerleden
 
 def parse_names(content):
     kamerleden_list = []
@@ -30,7 +29,7 @@ def parse_names(content):
         # Add ID
         naam_id = naam + " " + item["Id"]
         
-        kamerleden_list.append(kamerlid.Kamerlid(naam, item["Id"], item["Nummer"], item["Functie"]))
+        kamerleden_list.append(kl.Kamerlid(naam, item["Id"], item["Nummer"], item["Functie"]))
     
     return kamerleden_list
 
@@ -73,5 +72,6 @@ def update_kamerleden():
         }
         for k in kamerleden_list
     ]
-    save_kamerleden(kamerleden_dicts)
-    # print(kamerleden_dicts)
+    
+    kl.Kamerlid.save_kamerleden(kamerleden_dicts)
+    

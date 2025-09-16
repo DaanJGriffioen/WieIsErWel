@@ -2,6 +2,7 @@ import pandas as pd
 from const import kamerleden_dir, req
 from datetime import timedelta, date
 import os
+from db import db_connect as dbc
 
 
 class Kamerlid:
@@ -34,7 +35,40 @@ class Kamerlid:
             f = open(f"{kamerleden_dir}{minDatum}.txt", "r")
             return f
 
-    def get_kamerlid_activity():
-        pass
 
+    def save_kamerleden(data):
+        conn = dbc.get_connection()
+
+        cursor = conn.cursor()
+
+        statement = "SELECT id FROM kamerleden"
+
+        cursor.execute(statement)
+        existing_ids = [row[0] for row in cursor.fetchall()]
+
+        for row in data:
+            try:
+                if row['id'] in existing_ids:
+                    continue
+                statement = """
+                INSERT INTO kamerleden
+                    (id, naam, i_id, functie)
+                VALUES
+                    (%s, %s, %s, %s)
+                """
+
+                cursor.execute(
+                    statement,
+                    (
+                        row['id'],
+                        row['naam'],
+                        row['interne id'],
+                        row['functie']
+                    )
+                )
+            except Exception as e:
+                print(f"Exception! {e}")
+            
+        conn.commit()
+        cursor.close()
         

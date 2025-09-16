@@ -1,4 +1,4 @@
-from db import save
+from db import db_connect as dbc
 
 class zaak:
     # Id, Nummer, Soort, Titel, Status, Onderwerp, Organisatie, Volgnummer, Afgedaan, GewijzigdOp
@@ -13,6 +13,44 @@ class zaak:
         self.volgnummer = volgnummer
         self.afgedaan = afgedaan
         self.gewijzigd_op = gewijzigd_op
+
+
+    def save_zaak(data):
+        conn = dbc.get_connection()
+        cursor = conn.cursor()
+        
+        statement = "SELECT id FROM zaak"
+
+        cursor.execute(statement)
+        existing_ids = [row[0] for row in cursor.fetchall()]    
+
+        for row in data:
+            if row.id in existing_ids:
+                continue
+
+            statement = """
+            INSERT INTO zaak
+                (Id, Nummer, Soort, Titel, Status, Onderwerp, Organisatie, Volgnummer, Afgedaan, GewijzigdOp)
+            VALUES
+                (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+            """
+            cursor.execute(
+                statement,
+                (
+                    row.id,
+                    row.nummer,
+                    row.soort,
+                    row.titel,
+                    row.status,
+                    row.onderwerp,
+                    row.organisatie,
+                    row.volgnummer,
+                    row.afgedaan,
+                    row.gewijzigd_op
+                )
+            )
+        conn.commit()
+        cursor.close()
 
     def parse_zaken(content):
         zaken_list = []
@@ -34,9 +72,4 @@ class zaak:
             )
         
         print(zaken_list)
-        save.save_zaak(zaken_list)
-
-        
-    def get_kl_zaak(naam):
-        statement_id = f"GET id FROM kamerleden WHERE naam = {naam}"
-        statement = f"GET * FROM zaak WHERE id = {statement_id}"
+        zaak.save_zaak(zaken_list)
