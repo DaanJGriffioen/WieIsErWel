@@ -1,6 +1,7 @@
 from datetime import  date, timedelta
-from data_retrieval.zaken import update_zaken
 from data_retrieval.karmerleden import update_kamerleden
+from data_retrieval.zaak_actor import update_zaak_actor
+from data_retrieval.zaken import update_zaken
 from visuals import makeHTML
 from input_handler import aanwezigheid
 from parse import debug
@@ -105,5 +106,6 @@ if __name__=="__main__":
     git = args.git
 
     update_kamerleden()
+    update_zaak_actor()
     update_zaken()
     main()
