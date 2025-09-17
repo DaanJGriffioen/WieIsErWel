@@ -42,7 +42,10 @@ def write_to_logs(filename, kl_list):
 def update_kamerleden():
     
     print("Kamerleden lijst ophalen en verwerken...")
-    url = "https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/Persoon?$filter=Verwijderd%20eq%20false%20and%20FractieZetelPersoon/any(a:a/TotEnMet%20eq%20null)"
+    url = "https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/"   +\
+    "Persoon?$filter=Verwijderd eq false and "                      +\
+    "FractieZetelPersoon/any(a:a/TotEnMet eq null)"
+    
     filename = f"files/kamerleden/{date.today()}.txt"
     print(url)
 
