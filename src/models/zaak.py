@@ -18,21 +18,25 @@ class zaak:
     def save_zaak(data):
         conn = dbc.get_connection()
         cursor = conn.cursor()
-        
-        statement = "SELECT id FROM zaak"
-
-        cursor.execute(statement)
-        existing_ids = [row[0] for row in cursor.fetchall()]    
 
         for row in data:
-            if row.id in existing_ids:
-                continue
 
             statement = """
             INSERT INTO zaak
-                (Id, Nummer, Soort, Titel, Status, Onderwerp, Organisatie, Volgnummer, Afgedaan, GewijzigdOp)
+                (Id, 
+                Nummer, 
+                Soort, 
+                Titel, 
+                Status, 
+                Onderwerp, 
+                Organisatie, 
+                Volgnummer, 
+                Afgedaan, 
+                GewijzigdOp
+            )
             VALUES
-                (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+                (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE id = %s;
             """
             cursor.execute(
                 statement,
@@ -46,7 +50,8 @@ class zaak:
                     row.organisatie,
                     row.volgnummer,
                     row.afgedaan,
-                    row.gewijzigd_op
+                    row.gewijzigd_op,
+                    row.id
                 )
             )
         conn.commit()
@@ -70,6 +75,5 @@ class zaak:
                     gewijzigd_op=element["GewijzigdOp"]
                 )
             )
-        
-        print(zaken_list)
+    
         zaak.save_zaak(zaken_list)
