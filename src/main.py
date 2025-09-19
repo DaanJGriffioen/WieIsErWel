@@ -5,6 +5,7 @@ from data_retrieval.zaken import update_zaken
 from visuals import makeHTML
 from input_handler import aanwezigheid
 from parse import debug
+from scripts.kl_zk_match import get_ZA_Pid
 import argparse
 
 
@@ -92,7 +93,13 @@ def main():
             bezig = False
         else:
             print("Invoer is j/n")
-        
+
+def controller():
+    print("Enter User-Id:")
+    id = input()
+    get_ZA_Pid(id)
+    
+
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Set debug mode for printing")
@@ -105,7 +112,10 @@ if __name__=="__main__":
     debug = args.debug
     git = args.git
 
-    update_kamerleden()
-    update_zaak_actor()
-    update_zaken()
+    # update_kamerleden()
+    # update_zaak_actor()
+    # update_zaken()
+
+    controller()
+
     main()
