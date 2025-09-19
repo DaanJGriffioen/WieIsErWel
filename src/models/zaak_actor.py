@@ -1,16 +1,32 @@
 from db import db_connect as dbc
 
 class zaakActor:
-    def __init__(self, actor_id, zaak_id, actor_naam, relatie, intern_id, pers_id, api_gew):
-        self.actor_id = actor_id
+    def __init__(self, zaak_id, actor_naam, relatie, interne_id, pers_id, api_gew):
         
-        self.zaak_id = zaak_id
-        self.actor_naam = actor_naam
-        self.relatie = relatie
-        self.interne_id = intern_id
-        self.pers_id = pers_id
-        self.api_gew = api_gew
+        self.zaak_id =          zaak_id
+        self.actor_naam =       actor_naam
+        self.relatie =          relatie
+        self.interne_id =       interne_id
+        self.pers_id =          pers_id
+        self.api_gew =          api_gew
 
+    def zaakInit(objects):
+        zaak_actor_arr = []
+        if objects == None:
+            return zaak_actor_arr
+        
+        for object in objects:
+            zaak_actor_arr.append(
+                zaakActor(
+                    zaak_id=            object[0],
+                    actor_naam=         object[1],
+                    relatie=            object[2],
+                    interne_id=         object[3],
+                    pers_id=            object[4],
+                    api_gew=            object[5]
+                )
+            )
+        return zaak_actor_arr
 
     def save_zaak_actor(data):
         conn = dbc.get_connection()
@@ -55,14 +71,30 @@ class zaakActor:
             
             zaak_actor_list.append(
                 zaakActor(
-                    actor_id=element["Id"],
                     zaak_id=element["Zaak_Id"],
                     actor_naam=element["ActorNaam"],
                     relatie=element["Relatie"],
-                    intern_id=element["SidActor"],
+                    interne_id=element["SidActor"],
                     pers_id=element["Persoon_Id"],
                     api_gew=element["ApiGewijzigdOp"]
                 )
             )
         
         zaakActor.save_zaak_actor(zaak_actor_list)
+    
+    def get_zaak_actor_pers_id(id):
+        try:
+            conn = dbc.get_connection()
+            cursor = conn.cursor()
+
+            statement = f"""
+            SELECT * FROM zaak_actor WHERE pers_id = '{id}';
+            """
+
+            cursor.execute(statement)
+            result = cursor.fetchall()
+            cursor.close()
+            return result
+
+        except Exception as e:
+            print(f"Exception! {e}")
