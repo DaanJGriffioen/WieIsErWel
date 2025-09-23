@@ -4,100 +4,100 @@ from data_retrieval.zaak_actor import update_zaak_actor
 from data_retrieval.zaken import update_zaken
 from visuals import makeHTML
 from input_handler import aanwezigheid
+from api.kl_zk_match import get_zaak_per_actor
 from parse import debug
-from scripts.kl_zk_match import get_ZA_Pid
 import argparse
 
 
-def main():
-    bereik = False
-    data = []
-    aanwezig = ""
-    aanwezig_arr = []
-    afwezig_arr = []
+# def main():
+#     bereik = False
+#     data = []
+#     aanwezig = ""
+#     aanwezig_arr = []
+#     afwezig_arr = []
 
-    stri = input("1: Zelf datum opgeven \n2: Bereik van data:\n")
-    if int(stri) == 1:
-        stri = input("Geef een datum op (YYYY-MM-DD): ")
-        # Check de invoer voor yyyy-mm-dd
-        assert stri.split('-')[0].__len__() == 4
-        assert stri.split('-')[1].__len__() == 2
-        assert stri.split('-')[2].__len__() == 2
-        datum = date.fromisoformat(stri)
-        if date.today() < datum:
-            print("Kan niet in de toekomst kijken")
-            exit(0)
+#     stri = input("1: Zelf datum opgeven \n2: Bereik van data:\n")
+#     if int(stri) == 1:
+#         stri = input("Geef een datum op (YYYY-MM-DD): ")
+#         # Check de invoer voor yyyy-mm-dd
+#         assert stri.split('-')[0].__len__() == 4
+#         assert stri.split('-')[1].__len__() == 2
+#         assert stri.split('-')[2].__len__() == 2
+#         datum = date.fromisoformat(stri)
+#         if date.today() < datum:
+#             print("Kan niet in de toekomst kijken")
+#             exit(0)
 
-        aanwezig, afwezig = aanwezigheid(datum)
+#         aanwezig, afwezig = aanwezigheid(datum)
 
-        # Als er niemand is, stoppen
-        if type(aanwezig) == type(None) or type(afwezig) == type(None):
-            print("Geen aanwezigen / afwezigen")
-            exit(0)
+#         # Als er niemand is, stoppen
+#         if type(aanwezig) == type(None) or type(afwezig) == type(None):
+#             print("Geen aanwezigen / afwezigen")
+#             exit(0)
 
-        data.extend([stri, stri])
+#         data.extend([stri, stri])
 
-    # Bereik van data
-    elif int(stri) == 2:
-        data = []
-        bereik = True
-        str1 = input("Geef een eerste datum op (YYYY-MM-DD): ")
-        str2 = input("Geef een tweede datum op (YYYY-MM-DD): ")
+#     # Bereik van data
+#     elif int(stri) == 2:
+#         data = []
+#         bereik = True
+#         str1 = input("Geef een eerste datum op (YYYY-MM-DD): ")
+#         str2 = input("Geef een tweede datum op (YYYY-MM-DD): ")
 
-        assert str1.split('-')[0].__len__() == 4
-        assert str1.split('-')[1].__len__() == 2
-        assert str1.split('-')[2].__len__() == 2
-        datum1 = date.fromisoformat(str1)
+#         assert str1.split('-')[0].__len__() == 4
+#         assert str1.split('-')[1].__len__() == 2
+#         assert str1.split('-')[2].__len__() == 2
+#         datum1 = date.fromisoformat(str1)
 
-        assert str2.split('-')[0].__len__() == 4
-        assert str2.split('-')[1].__len__() == 2
-        assert str2.split('-')[2].__len__() == 2
-        datum2 = date.fromisoformat(str2)
+#         assert str2.split('-')[0].__len__() == 4
+#         assert str2.split('-')[1].__len__() == 2
+#         assert str2.split('-')[2].__len__() == 2
+#         datum2 = date.fromisoformat(str2)
 
-        data.extend([str1, str2])
+#         data.extend([str1, str2])
 
-        if date.today() < datum2:
-            print("Kan niet in de toekomst kijken, misschien een volgende update :)")
-            exit(0)
+#         if date.today() < datum2:
+#             print("Kan niet in de toekomst kijken, misschien een volgende update :)")
+#             exit(0)
 
-        # Bereken het verschil tussen de data
-        delta = datum2 - datum1
+#         # Bereken het verschil tussen de data
+#         delta = datum2 - datum1
 
-        # Op zaterdagen en zondagen wordt er niet gedebatteerd
-        for _ in range(delta.days):
-            datum1 += timedelta(days=1)
-            if datum1.isoweekday == 6 or datum1.isoweekday == 7:
-                continue
+#         # Op zaterdagen en zondagen wordt er niet gedebatteerd
+#         for _ in range(delta.days):
+#             datum1 += timedelta(days=1)
+#             if datum1.isoweekday == 6 or datum1.isoweekday == 7:
+#                 continue
 
-            if(datum1 == date.today()):
-                print("Verslag van vandaag is er waarschijnlijk niet, dus deze wordt niet gezocht")
-                continue
+#             if(datum1 == date.today()):
+#                 print("Verslag van vandaag is er waarschijnlijk niet, dus deze wordt niet gezocht")
+#                 continue
         
-            aanwezig, afwezig = aanwezigheid(datum1)
-            if type(aanwezig) == type(None) or type(afwezig) == type(None):
-                continue
+#             aanwezig, afwezig = aanwezigheid(datum1)
+#             if type(aanwezig) == type(None) or type(afwezig) == type(None):
+#                 continue
 
-            aanwezig_arr += aanwezig
-            afwezig_arr += afwezig
-        else:
-            print("Verkeerde invoer")
-    bezig = True
+#             aanwezig_arr += aanwezig
+#             afwezig_arr += afwezig
+#         else:
+#             print("Verkeerde invoer")
+#     bezig = True
         
-    while bezig:
-        stri = input("HTML maken? j/n: \n")
-        if stri == "j" or stri == "J":
-            if bereik: makeHTML(aanwezig_arr, afwezig_arr, data)
-            else: makeHTML(aanwezig, afwezig, data)
-            bezig = False
-        elif stri == "n" or stri == "N":
-            bezig = False
-        else:
-            print("Invoer is j/n")
+#     while bezig:
+#         stri = input("HTML maken? j/n: \n")
+#         if stri == "j" or stri == "J":
+#             if bereik: makeHTML(aanwezig_arr, afwezig_arr, data)
+#             else: makeHTML(aanwezig, afwezig, data)
+#             bezig = False
+#         elif stri == "n" or stri == "N":
+#             bezig = False
+#         else:
+#             print("Invoer is j/n")
 
 def controller():
     print("Enter User-Id:")
     id = input()
-    get_ZA_Pid(id)
+    get_zaak_per_actor(id)
     
 
 
@@ -117,5 +117,3 @@ if __name__=="__main__":
     # update_zaken()
 
     controller()
-
-    main()
