@@ -2,6 +2,7 @@ import pandas as pd
 from datetime import timedelta, date
 import os
 import requests as req
+import json
 ### Constants used in the program ### 
 
 git = False
