@@ -38,23 +38,18 @@ class Kamerlid:
 
     def save_kamerleden(data):
         conn = dbc.get_connection()
-
         cursor = conn.cursor()
-
-        statement = "SELECT id FROM kamerleden"
-
-        cursor.execute(statement)
-        existing_ids = [row[0] for row in cursor.fetchall()]
-
+        
+        cursor.execute(f"UPDATE kamerleden SET actief = 0")
+        
         for row in data:
             try:
-                if row['id'] in existing_ids:
-                    continue
                 statement = """
-                INSERT INTO kamerleden
-                    (id, naam, i_id, functie)
-                VALUES
-                    (%s, %s, %s, %s)
+                    INSERT INTO kamerleden
+                        (id, naam, i_id, functie, actief)
+                    VALUES
+                        (%s, %s, %s, %s, %s)
+                    ON DUPLICATE KEY UPDATE actief = 1;
                 """
 
                 cursor.execute(
@@ -63,12 +58,12 @@ class Kamerlid:
                         row['id'],
                         row['naam'],
                         row['interne id'],
-                        row['functie']
+                        row['functie'],
+                        1
                     )
                 )
             except Exception as e:
-                print(f"Exception! {e}")
+                print(f"Exception! Adding Kamerlid! {e}")
             
         conn.commit()
         cursor.close()
-        
