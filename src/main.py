@@ -1,5 +1,6 @@
 from datetime import  date, timedelta
 from data_retrieval.karmerleden import update_kamerleden
+from data_retrieval.besluit import get_headcount
 from data_retrieval.zaak_actor import update_zaak_actor
 from data_retrieval.zaken import update_zaken
 from visuals import makeHTML
@@ -96,6 +97,7 @@ import argparse
 
 def controller():
     get_kl()
+    get_headcount()
     
 
 
