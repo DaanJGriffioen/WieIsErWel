@@ -1,6 +1,5 @@
 import const 
 from models import kamerlid as kl
-from const import pd
 import json
 from datetime import date
 
