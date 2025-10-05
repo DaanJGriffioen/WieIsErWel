@@ -4,7 +4,7 @@ from data_retrieval.zaak_actor import update_zaak_actor
 from data_retrieval.zaken import update_zaken
 from visuals import makeHTML
 from input_handler import aanwezigheid
-from api.kl_zk_match import get_zaak_per_actor
+from api.api import get_kl
 from parse import debug
 import argparse
 
@@ -95,9 +95,7 @@ import argparse
 #             print("Invoer is j/n")
 
 def controller():
-    print("Enter User-Id:")
-    id = input()
-    get_zaak_per_actor(id)
+    get_kl()
     
 
 
@@ -112,7 +110,7 @@ if __name__=="__main__":
     debug = args.debug
     git = args.git
 
-    # update_kamerleden()
+    update_kamerleden()
     # update_zaak_actor()
     # update_zaken()
 

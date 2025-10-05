@@ -27,3 +27,25 @@ def get_zaak_per_actor(id):
     except Exception as e:
         print(f"Exception when getting zaak: {e}")
 
+# Returns a list of all current Kamerleden, consisting of IDs and name
+def get_kl():
+    conn = dbc.get_connection()
+    cursor = conn.cursor()
+    try:
+        statement = f"""
+            SELECT id, naam FROM kamerleden;
+        """
+
+        cursor.execute(statement)
+
+        kl_data = cursor.fetchall()
+        print("Sucessfully fetched kamerleden")
+
+        for iter, elem in enumerate(kl_data, 1):
+            print(f"{iter}::{elem}")
+
+
+    except Exception as e:
+        print(f"Exception when getting zaak: {e}")
+        
+
